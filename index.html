@@ -41,8 +41,11 @@
     </nav>
 
     <div class="container">
-      <div class="text">{{ text }}</div>
-      <h2>Texts JSON</h2>
+      <div class="jumbotron text">
+        <h1>{{ text }}</h1>
+      </div>
+
+      <h3>Texts JSON</h3>
       <textarea v-model="textsJson" class="form-control texts" rows="10" wrap="soft"></textarea>
         <p>
           <button class="btn btn-primary start-btn" v-on:click="speechTexts(0)">Start</button>
@@ -69,14 +72,14 @@
           speech.lang = 'en-US';
           window.speechSynthesis.speak(speech);
         },
-        speechTexts: function(i) {
+        speechTexts: function(i, delay) {
           var texts = JSON.parse(this.textsJson)
           if (i == texts.length) return;
           setTimeout(function() {
             var text = texts[i];
             app.speechText(text);
-            app.speechTexts(i+1);
-          }, 3000);
+            app.speechTexts(i+1, 3000);
+          }, delay || 0);
         }
       }
     });
