@@ -11,6 +11,9 @@
   body {
     margin-top: 50px;
   }
+  .text {
+    text-align: center;
+  }
   .texts {
     font-family: monospace;
   }
@@ -28,11 +31,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">VOA</a>
+          <a class="navbar-brand" href="./">VOA</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="./">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
@@ -41,15 +44,20 @@
     </nav>
 
     <div class="container">
+      <h2>Text</h2>
       <div class="jumbotron text">
-        <h1>{{ text }}</h1>
+        <h1>{{ text }}&nbsp;</h1>
+        <p>
+          <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
+        </p>
+        <p>
+          <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
+          <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
+        </p>
       </div>
 
       <h3>Texts JSON</h3>
       <textarea v-model="textsJson" class="form-control texts" rows="10" wrap="soft"></textarea>
-        <p>
-          <button class="btn btn-primary start-btn" v-on:click="speechTexts(0)">Start</button>
-        </p>
       </div>
 
   </div>
@@ -63,26 +71,43 @@
       el: '#app',
       data: {
         text: '',
-        textsJson: '[ "Hello World!", "Apple", "Banana", "Candy", "Donuts" ]'
+        textsJson: '[ "Hello World!", "Apple", "Banana", "Candy", "Donuts" ]',
+        i: 0
       },
       methods: {
+        init: function() {
+          var texts = JSON.parse(this.textsJson);
+          this.text = texts[this.i];
+        },
         speechText: function(text) {
           this.text = text;
           var speech = new SpeechSynthesisUtterance(text);
           speech.lang = 'en-US';
           window.speechSynthesis.speak(speech);
         },
-        speechTexts: function(i, delay) {
-          var texts = JSON.parse(this.textsJson)
-          if (i == texts.length) return;
-          setTimeout(function() {
-            var text = texts[i];
-            app.speechText(text);
-            app.speechTexts(i+1, 3000);
-          }, delay || 0);
+        speech: function() {
+          var texts = JSON.parse(this.textsJson);
+          var text = texts[this.i];
+          this.speechText(text);
+        },
+        ok: function() {
+          this.next();
+        },
+        ko: function() {
+          this.next();
+        },
+        next: function() {
+          var texts = JSON.parse(this.textsJson);
+          this.i = this.i + 1;
+          if (this.i == texts.length) {
+            this.i = 0;
+          }
+          this.text = texts[this.i];
         }
       }
     });
+
+    app.init();
 
   </script>
 </body>
