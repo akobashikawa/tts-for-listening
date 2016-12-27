@@ -44,15 +44,21 @@
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
 
   <script>
-    var text = 'Hello World!';
     var speehText = function(text) {
       var speech = new SpeechSynthesisUtterance(text);
-      speech.lang = 'es-US';
+      speech.lang = 'en-US';
       window.speechSynthesis.speak(speech);
     };
 
-    speehText(text);
-
+    [
+      'Hello World!',
+      'Apple',
+      'Banana',
+      'Candy',
+      'Donuts'
+    ].map(function(text) {
+      speehText(text);
+    });
 
   </script>
 </body>
