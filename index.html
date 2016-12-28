@@ -91,12 +91,15 @@
           this.speechText(text);
         },
         ok: function() {
-          this.next();
+          var texts = JSON.parse(this.textsJson);
+          texts.splice(this.i, 1);
+          this.textsJson = JSON.stringify(texts);
+          if (this.i == texts.length) {
+            this.i = 0;
+          }
+          this.text = texts[this.i];
         },
         ko: function() {
-          this.next();
-        },
-        next: function() {
           var texts = JSON.parse(this.textsJson);
           this.i = this.i + 1;
           if (this.i == texts.length) {
