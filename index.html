@@ -17,6 +17,12 @@
   .texts {
     font-family: monospace;
   }
+  .show {
+    opacity: 1;
+  }
+  .noshow {
+    opacity: 0;
+  }
   </style>
 </head>
 <body>
@@ -46,9 +52,10 @@
     <div class="container">
       <h2>Text</h2>
       <div class="jumbotron text">
-        <h1>{{ text }}&nbsp;</h1>
+        <h1 v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</h1>
         <p>
           <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
+          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
         </p>
         <p>
           <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
@@ -70,6 +77,7 @@
     var app = new Vue({
       el: '#app',
       data: {
+        show: false,
         text: '',
         textsJson: '[ "Hello World!", "Apple", "Banana", "Candy", "Donuts" ]',
         i: 0
@@ -78,6 +86,7 @@
         init: function() {
           var texts = JSON.parse(this.textsJson);
           this.text = texts[this.i];
+          this.speech();
         },
         speechText: function(text) {
           this.text = text;
@@ -94,10 +103,16 @@
           var texts = JSON.parse(this.textsJson);
           texts.splice(this.i, 1);
           this.textsJson = JSON.stringify(texts);
+          if (texts.length === 0) {
+            this.speechText('Congratulations');
+            return;
+          }
           if (this.i == texts.length) {
             this.i = 0;
           }
           this.text = texts[this.i];
+          this.show = false;
+          this.speech();
         },
         ko: function() {
           var texts = JSON.parse(this.textsJson);
@@ -106,6 +121,8 @@
             this.i = 0;
           }
           this.text = texts[this.i];
+          this.show = false;
+          this.speech();
         }
       }
     });
