@@ -55,11 +55,9 @@
       <div class="jumbotron text">
         <h1 v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</h1>
         <p>
-          <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
-          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
-        </p>
-        <p>
           <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
+          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
+          <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
           <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
         </p>
       </div>
@@ -144,6 +142,10 @@
           {
             id: 'helloworld',
             textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts"
+          },
+          {
+            id: 'tellme',
+            textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
           }
         ]
       },
