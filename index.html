@@ -23,6 +23,9 @@
   .noshow {
     opacity: 0;
   }
+  .library-item {
+    margin-right: 1em;
+  }
   </style>
 </head>
 <body>
@@ -92,6 +95,22 @@
         <h3>Text</h3>
         <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"></textarea>
 
+        <div class="input-group">
+          <input type="text" class="form-control" id="libraryItemId" placeholder="library item id">
+          <div class="input-group-btn">
+            <button class="btn btn-primary" v-on:click="addToLibrary">Add this to library</button>
+          </div>
+        </div>
+
+        <h4>Library</h4>
+        <div
+          is="library-item"
+          v-for="item in library"
+          v-bind:id="item.id"
+          v-on:load="loadText(item.id)"
+          v-on:remove="removeFromLibrary(item.id)"
+          ></div>
+
       </div>
 
     </div>
@@ -103,13 +122,30 @@
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
 
   <script>
+
+    Vue.component('library-item', {
+      template: '\
+        <div class="btn-group library-item">\
+          <button class="btn btn-default btn-xs" v-on:click="$emit(\'load\')">{{ id }}</button>\
+          <button class="btn btn-danger btn-xs" v-on:click="$emit(\'remove\')">X</button>\
+        </div>\
+      ',
+      props: ['id']
+    });
+
     var app = new Vue({
       el: '#app',
       data: {
         show: false,
         text: '',
         textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts",
-        i: 0
+        i: 0,
+        library: [
+          {
+            id: 'helloworld',
+            textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts"
+          }
+        ]
       },
       methods: {
         init: function(textsString) {
@@ -156,6 +192,33 @@
           this.text = texts[this.i];
           this.show = false;
           this.speechText(this.text);
+        },
+        loadText: function(id) {
+          console.log(id);
+          var match = this.library.filter(function(item) {
+            return item.id === id
+          });
+          if (match) {
+            this.textsString = match[0].textsString;
+          }
+        },
+        addToLibrary: function(e) {
+          var id = document.getElementById('libraryItemId').value;
+          var item = {
+            id: id,
+            textsString: this.textsString
+          };
+          this.library.push(item);
+          console.log(this.library);
+        },
+        removeFromLibrary: function(id) {
+          for (var i=0; i<this.library.length; i++) {
+            var item = this.library[i];
+            if (item.id === id) {
+              this.library.splice(i, 1);
+              return;
+            }
+          }
         }
       }
     });
