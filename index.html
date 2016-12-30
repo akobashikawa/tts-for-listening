@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TTS for Listening</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <style>
+  body {
+    margin-top: 50px;
+  }
+  .text {
+    text-align: center;
+  }
+  .texts {
+    font-family: monospace;
+  }
+  .show {
+    opacity: 1;
+  }
+  .noshow {
+    opacity: 0;
+  }
+  .library-item {
+    margin-right: 1em;
+  }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="./">TTS for Listening</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#about">About</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="jumbotron text">
+        <h1 v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</h1>
+        <p>
+          <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
+          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
+          <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
+          <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
+        </p>
+      </div>
+
+      <div id="about">
+        <h2>About</h2>
+        <p>
+          Simple Text To Speech for listening.
+        </p>
+        <ol>
+          <li>
+            Put some text in Text.
+          </li>
+          <li>
+            You can hear first line. Guess what you hear.
+            You can hear again clicking on Speech button.
+          </li>
+          <li>
+            Check if you are ok clicking on Show button.
+          </li>
+          <li>
+            Is it ok? then click on OK button and this line goes away.
+          </li>
+          <li>
+            If not, then click on KO button and this line remains.
+          </li>
+        </ol>
+      </div>
+
+      <div id="settings">
+        <h2>Settings</h2>
+
+        <h3>Text</h3>
+        <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"></textarea>
+
+        <div class="input-group">
+          <input type="text" class="form-control" id="libraryItemId" placeholder="library item id">
+          <div class="input-group-btn">
+            <button class="btn btn-primary" v-on:click="addToLibrary">Add this to library</button>
+          </div>
+        </div>
+
+        <h4>Library</h4>
+        <div
+          is="library-item"
+          v-for="item in library"
+          v-bind:id="item.id"
+          v-on:load="loadText(item.id)"
+          v-on:remove="removeFromLibrary(item.id)"
+          ></div>
+
+      </div>
+
+    </div>
+
+  </div><!-- #app -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
+  <script>
+
+    Vue.component('library-item', {
+      template: '\
+        <div class="btn-group library-item">\
+          <button class="btn btn-default btn-xs" v-on:click="$emit(\'load\')">{{ id }}</button>\
+          <button class="btn btn-danger btn-xs" v-on:click="$emit(\'remove\')">X</button>\
+        </div>\
+      ',
+      props: ['id']
+    });
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        show: false,
+        text: '',
+        textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts",
+        i: 0,
+        library: [
+          {
+            id: 'helloworld',
+            textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts"
+          },
+          {
+            id: 'tellme',
+            textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
+          }
+        ]
+      },
+      methods: {
+        init: function(textsString) {
+          var texts = this.getTextsFromString(this.textsString);
+          this.text = texts[this.i];
+          this.speechText(this.text);
+        },
+        getTextsFromString: function(s) {
+          return s.split("\n");
+        },
+        speechText: function(text) {
+          this.text = text;
+          var speech = new SpeechSynthesisUtterance(text);
+          speech.lang = 'en-US';
+          window.speechSynthesis.speak(speech);
+        },
+        speech: function() {
+          var texts = this.getTextsFromString(this.textsString);
+          var text = texts[this.i];
+          this.speechText(text);
+        },
+        ok: function() {
+          var texts = this.getTextsFromString(this.textsString);
+          texts.splice(this.i, 1);
+          this.textsString = texts.join("\n");
+          if (texts.length === 0) {
+            this.show = true;
+            this.speechText('Congratulations');
+            return;
+          }
+          if (this.i == texts.length) {
+            this.i = 0;
+          }
+          this.text = texts[this.i];
+          this.show = false;
+          this.speechText(this.text);
+        },
+        ko: function() {
+          var texts = this.getTextsFromString(this.textsString);
+          this.i = this.i + 1;
+          if (this.i == texts.length) {
+            this.i = 0;
+          }
+          this.text = texts[this.i];
+          this.show = false;
+          this.speechText(this.text);
+        },
+        loadText: function(id) {
+          console.log(id);
+          var match = this.library.filter(function(item) {
+            return item.id === id
+          });
+          if (match) {
+            this.textsString = match[0].textsString;
+          }
+        },
+        addToLibrary: function(e) {
+          var id = document.getElementById('libraryItemId').value;
+          var item = {
+            id: id,
+            textsString: this.textsString
+          };
+          this.library.push(item);
+          console.log(this.library);
+        },
+        removeFromLibrary: function(id) {
+          for (var i=0; i<this.library.length; i++) {
+            var item = this.library[i];
+            if (item.id === id) {
+              this.library.splice(i, 1);
+              return;
+            }
+          }
+        }
+      }
+    });
+
+    app.init();
+
+  </script>
+</body>
+</html>
