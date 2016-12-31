@@ -56,8 +56,8 @@
         <h1 v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</h1>
         <p>
           <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
-          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
           <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
+          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
           <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
         </p>
       </div>
@@ -91,23 +91,28 @@
         <h2>Settings</h2>
 
         <h3>Text</h3>
-        <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"></textarea>
-
-        <div class="input-group">
-          <input type="text" class="form-control" id="libraryItemId" placeholder="library item id">
-          <div class="input-group-btn">
-            <button class="btn btn-primary" v-on:click="addToLibrary">Add this to library</button>
-          </div>
-        </div>
 
         <h4>Library</h4>
-        <div
+        <p>
+          <div
           is="library-item"
           v-for="item in library"
           v-bind:id="item.id"
           v-on:load="loadText(item.id)"
           v-on:remove="removeFromLibrary(item.id)"
           ></div>
+        </p>
+
+          <p>
+            <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"></textarea>
+          </p>
+
+          <div class="input-group">
+            <input type="text" class="form-control" id="libraryItemId" placeholder="new id">
+            <div class="input-group-btn">
+              <button class="btn btn-primary" v-on:click="addToLibrary">Add to library</button>
+            </div>
+          </div>
 
       </div>
 
@@ -124,7 +129,7 @@
     Vue.component('library-item', {
       template: '\
         <div class="btn-group library-item">\
-          <button class="btn btn-default btn-xs" v-on:click="$emit(\'load\')">{{ id }}</button>\
+          <button class="btn btn-default btn-xs active" v-on:click="$emit(\'load\')">{{ id }}</button>\
           <button class="btn btn-danger btn-xs" v-on:click="$emit(\'remove\')">X</button>\
         </div>\
       ',
@@ -138,16 +143,7 @@
         text: '',
         textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts",
         i: 0,
-        library: [
-          {
-            id: 'helloworld',
-            textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts"
-          },
-          {
-            id: 'tellme',
-            textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
-          }
-        ]
+        library: []
       },
       methods: {
         init: function(textsString) {
@@ -225,6 +221,16 @@
       }
     });
 
+    app.library = [
+      {
+        id: 'helloworld',
+        textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts"
+      },
+      {
+        id: 'tellme',
+        textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
+      }
+    ];
     app.init();
 
   </script>
