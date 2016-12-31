@@ -1,4 +1,4 @@
-# tts-for-listening
+# TTS for Listening
 
 Simple Text To Speech for listening.
 
