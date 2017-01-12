@@ -14,6 +14,9 @@
   .text {
     text-align: center;
   }
+  .text__display {
+    font-size: 50px;
+  }
   .texts {
     font-family: monospace;
   }
@@ -53,8 +56,10 @@
 
     <div class="container">
       <div class="jumbotron text">
-        <h1 v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</h1>
-        <p>
+        <div class="text__display">
+          <span v-bind:class="{show: show, noshow: !show}">{{ text }}</span>
+        </div>
+        <p class="text__control">
           <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
           <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
           <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
@@ -141,7 +146,7 @@
       data: {
         show: false,
         text: '',
-        textsString: "Hello World!\nApple\nBanana\nCandy\nDonuts",
+        textsString: '',
         i: 0,
         library: []
       },
@@ -231,6 +236,7 @@
         textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
       }
     ];
+    app.textsString = app.library[0].textsString;
     app.init();
 
   </script>
