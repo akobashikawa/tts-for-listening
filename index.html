@@ -55,16 +55,19 @@
     </nav>
 
     <div class="container">
-      <div class="jumbotron text">
-        <div class="text__display">
-          <span v-bind:class="{show: show, noshow: !show}">{{ text }}</span>
+      <div class="text">
+        <h3 class="text__title">{{ currentTextId }}</h3>
+        <div class="jumbotron">
+          <div class="text__display">
+            <span v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</span>
+          </div>
+          <p class="text__control">
+            <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
+            <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
+            <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
+            <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
+          </p>
         </div>
-        <p class="text__control">
-          <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
-          <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
-          <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
-          <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
-        </p>
       </div>
 
       <div id="about">
@@ -74,10 +77,11 @@
         </p>
         <ol>
           <li>
-            Put some text in Text.
+            Choose a text in library. <br>
+            Also you can paste a new text in textarea and add to the library.
           </li>
           <li>
-            You can hear first line. Guess what you hear.
+            You can hear first line of line. Guess what you hear.
             You can hear again clicking on Speech button.
           </li>
           <li>
@@ -148,7 +152,8 @@
         text: '',
         textsString: '',
         i: 0,
-        library: []
+        library: [],
+        currentTextId: ''
       },
       methods: {
         init: function(textsString) {
@@ -197,12 +202,15 @@
           this.speechText(this.text);
         },
         loadText: function(id) {
-          console.log(id);
+          if (id === undefined) {
+            id = this.library[0].id;
+          }
           var match = this.library.filter(function(item) {
             return item.id === id
           });
           if (match) {
             this.textsString = match[0].textsString;
+            this.currentTextId = id;
           }
         },
         addToLibrary: function(e) {
@@ -236,7 +244,7 @@
         textsString: "Tell me and I forget,\nteach me and I may remember,\ninvolve me and I learn"
       }
     ];
-    app.textsString = app.library[0].textsString;
+    app.loadText();
     app.init();
 
   </script>
