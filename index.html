@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,36 +9,44 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
   <style>
-  body {
-    margin-top: 50px;
-  }
-  .text {
-    text-align: center;
-  }
-  .text__display {
-    font-size: 40px;
-  }
-  .texts {
-    font-family: monospace;
-  }
-  .show {
-    opacity: 1;
-  }
-  .noshow {
-    opacity: 0;
-  }
-  .library-item {
-    margin-right: 1em;
-  }
+    body {
+      margin-top: 50px;
+    }
+
+    .text {
+      text-align: center;
+    }
+
+    .text__display {
+      font-size: 40px;
+    }
+
+    .texts {
+      font-family: monospace;
+    }
+
+    .show {
+      opacity: 1;
+    }
+
+    .noshow {
+      opacity: 0;
+    }
+
+    .library-item {
+      margin-right: 1em;
+    }
   </style>
 </head>
+
 <body>
   <div id="app">
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+            aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -47,7 +56,7 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#about">About</a></li>
+            <li><a href="#about">Instructions</a></li>
             <li><a href="#settings">Settings</a></li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -62,38 +71,40 @@
             <span v-bind:class="{show: show, noshow: !show}">{{ text }}&nbsp;</span>
           </div>
           <p class="text__control">
-            <button class="btn btn-danger ko-btn" v-on:click="ko">KO</button>
-            <button class="btn btn-info speech-btn" v-on:click="speech">Speech</button>
-            <button class="btn btn-primary speech-btn" v-on:click="show=true;">Show</button>
+            <button class="btn btn-primary speech-btn" v-on:click="speech">Repeat</button>
+            <button class="btn btn-warning ko-btn" v-on:click="ko">Pass</button>
+            <button class="btn btn-info speech-btn" v-on:click="show=true;">Show</button>
             <button class="btn btn-success ok-btn" v-on:click="ok">OK</button>
           </p>
         </div>
       </div>
 
       <div id="about">
-        <h2>About</h2>
+        <h2>Instructions</h2>
         <p>
           Simple Text To Speech for listening.
         </p>
-        <ol>
+        <ul>
           <li>
-            Choose a text in library. <br>
-            Also you can paste a new text in textarea and add to the library.
+            Listen and figure out what he is saying.
           </li>
           <li>
-            You can hear first line of line. Guess what you hear. <br>
-            You can hear again clicking on Speech button.
+            <strong>Repeat</strong>: Repeat again.
           </li>
           <li>
-            Check if you are ok clicking on Show button.
+            <strong>Pass</strong>: Next.
           </li>
           <li>
-            Is it ok? then click on OK button and this line goes away.
+            <strong>Show</strong>: Show the text.
           </li>
           <li>
-            If not, then click on KO button and this line remains.
+            <strong>OK</strong>: No repeat again and next.
           </li>
-        </ol>
+          <li>
+            You can load text picking an item of library. <br>
+            Also you can paste a new text in textarea and add a new item to library.
+          </li>
+        </ul>
       </div>
 
       <div id="settings">
@@ -103,25 +114,21 @@
 
         <h4>Library</h4>
         <p>
-          <div
-          is="library-item"
-          v-for="item in library"
-          v-bind:id="item.id"
-          v-on:load="loadText(item.id)"
-          v-on:remove="removeFromLibrary(item.id)"
-          ></div>
+        <div is="library-item" v-for="item in library" v-bind:id="item.id" v-on:load="loadText(item.id)"
+          v-on:remove="removeFromLibrary(item.id)"></div>
         </p>
 
-          <p>
-            <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"></textarea>
-          </p>
+        <p>
+          <textarea v-model="textsString" class="form-control texts" rows="10" wrap="soft"
+            placeholder="Text to listen. One line for sentence."></textarea>
+        </p>
 
-          <div class="input-group">
-            <input type="text" class="form-control" id="libraryItemId" placeholder="new id">
-            <div class="input-group-btn">
-              <button class="btn btn-primary" v-on:click="addToLibrary">Add to library</button>
-            </div>
+        <div class="input-group">
+          <input type="text" class="form-control" id="libraryItemId" placeholder="id of item for library">
+          <div class="input-group-btn">
+            <button class="btn btn-primary" v-on:click="addToLibrary">Add to library</button>
           </div>
+        </div>
 
       </div>
 
@@ -153,29 +160,31 @@
         textsString: '',
         i: 0,
         library: [],
-        currentTextId: ''
+        currentTextId: '',
+        showInstructions: false,
+        showSettings: false,
       },
       methods: {
-        init: function(textsString) {
+        init: function (textsString) {
           var texts = this.getTextsFromString(this.textsString);
           this.text = texts[this.i];
           this.speechText(this.text);
         },
-        getTextsFromString: function(s) {
+        getTextsFromString: function (s) {
           return s.split("\n");
         },
-        speechText: function(text) {
+        speechText: function (text) {
           this.text = text;
           var speech = new SpeechSynthesisUtterance(text);
           speech.lang = 'en-US';
           window.speechSynthesis.speak(speech);
         },
-        speech: function() {
+        speech: function () {
           var texts = this.getTextsFromString(this.textsString);
           var text = texts[this.i];
           this.speechText(text);
         },
-        ok: function() {
+        ok: function () {
           var texts = this.getTextsFromString(this.textsString);
           texts.splice(this.i, 1);
           this.textsString = texts.join("\n");
@@ -191,7 +200,7 @@
           this.show = false;
           this.speechText(this.text);
         },
-        ko: function() {
+        ko: function () {
           var texts = this.getTextsFromString(this.textsString);
           this.i = this.i + 1;
           if (this.i == texts.length) {
@@ -201,11 +210,11 @@
           this.show = false;
           this.speechText(this.text);
         },
-        loadText: function(id) {
+        loadText: function (id) {
           if (id === undefined) {
             id = this.library[0].id;
           }
-          var match = this.library.filter(function(item) {
+          var match = this.library.filter(function (item) {
             return item.id === id
           });
           if (match) {
@@ -213,7 +222,7 @@
             this.currentTextId = id;
           }
         },
-        addToLibrary: function(e) {
+        addToLibrary: function (e) {
           var id = document.getElementById('libraryItemId').value;
           var item = {
             id: id,
@@ -222,8 +231,8 @@
           this.library.push(item);
           console.log(this.library);
         },
-        removeFromLibrary: function(id) {
-          for (var i=0; i<this.library.length; i++) {
+        removeFromLibrary: function (id) {
+          for (var i = 0; i < this.library.length; i++) {
             var item = this.library[i];
             if (item.id === id) {
               this.library.splice(i, 1);
@@ -249,4 +258,5 @@
 
   </script>
 </body>
+
 </html>
